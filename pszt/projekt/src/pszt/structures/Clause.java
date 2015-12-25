@@ -13,18 +13,20 @@ public class Clause {
     
     private List<Predicate> predicates = new LinkedList<>();
 
+    public Clause(){
+
+    }
+
+    Clause(Clause origin){
+        origin.predicates.forEach(p -> this.predicates.add(new Predicate(p)));
+    }
+
     public void addPredicate(Predicate p) {
         predicates.add(p);
     }
 
-    public void addPredicates(Collection<Predicate> predicates){
+    public void addPredicates(Collection<Predicate> predicates) {
         this.predicates.addAll(predicates);
-    }
-    
-    @Override
-    public String toString() {
-        return predicates.stream().map(Object::toString)
-                .collect(Collectors.joining(" v "));
     }
     
     public List<Predicate> getPredicates() {
@@ -32,57 +34,57 @@ public class Clause {
     }
 
     public List<Clause> performResolution(Clause other){
-        List<Clause> resolutionResults = new ArrayList<>(predicates.size());
+        List<Clause> result = new ArrayList<>(predicates.size());
         renameVariables(other);
-        for (Predicate thisPredicateA : this.predicates) {
-            for (Predicate otherPredicateB : other.predicates) {
-                if(thisPredicateA.isNegationOf(otherPredicateB)){
-                    Predicate predicateA = new Predicate(thisPredicateA);
-                    Predicate predicateB = new Predicate(otherPredicateB);
-                    Unification un = findUnification(predicateA, predicateB);
-                    if (un == null) continue;
-                    un.switchToArchive();
-                    Unification u = un;
+        for (Predicate thisPredicate : this.predicates) {
+            for (Predicate otherPredicate : other.predicates) {
+                if(thisPredicate.isNegationOf(otherPredicate)){
+                    Unification unification = findUnification(new Predicate(thisPredicate), new Predicate(otherPredicate));
+                    if (unification == null) continue;
                     Clause resolution = new Clause();
-                    resolution.addPredicates(preparePredicates(this, u.first, thisPredicateA));
-                    resolution.addPredicates(preparePredicates(other, u.second, otherPredicateB));
-                    resolutionResults.add(resolution);
+                    resolution.addPredicates(adjustPredicates(new Clause(this), unification.sigma, thisPredicate));
+                    resolution.addPredicates(adjustPredicates(new Clause(other), unification.sigmaPrime, otherPredicate));
+                    result.add(resolution);
                 }
             }
         }
-        return resolutionResults;
+        return result;
     }
 
-    private List<Predicate> preparePredicates(Clause other, Substitution s, Predicate toSkip2) {
-        return other.predicates.stream()
-                .filter(p -> !p.equals(toSkip2))
-                .map(p -> p.applySubstitution(s))
+    private List<Predicate> adjustPredicates(Clause source, Substitution substitution, Predicate exclude) {
+        return source.predicates.stream()
+                .filter(p -> !p.equals(exclude))
+                .map(p -> p.applySubstitution(substitution))
                 .collect(Collectors.toList());
     }
 
-    private Unification findUnification(Predicate thisPredicate, Predicate otherPredicate) {
-        Unification un = new Unification();
+    private Unification findUnification(final Predicate copyA, final Predicate copyB) {
+        Unification unification = new Unification();
         try{
-            while(!thisPredicate.equals(otherPredicate)){
-                thisPredicate.findUnification(otherPredicate, un);
-                thisPredicate.applySubstitution(un.first);
-                otherPredicate.applySubstitution(un.second);
-                un.clear();
+            while(!copyA.equals(copyB)){
+                copyA.tryToUnify(copyB, unification);
+                copyA.applySubstitution(unification.sigma);
+                copyB.applySubstitution(unification.sigmaPrime);
+                unification.clear();
             }
         }catch(UnificationNotFoundException e){
             return null;
         }
-        return un;
+        unification.loadOverallUnification();
+        return unification;
     }
 
     private void renameVariables(Clause other) {
         Set<String> variables = new HashSet<>();
-        Clause source = this.predicates.size() > other.predicates.size() ?
-                other : this;
-        source.predicates.forEach(p -> variables.addAll(p.getAllVariables()));
-        Clause target = source == this? other : this;
+        this.predicates.forEach(p -> variables.addAll(p.getAllVariables()));
         Substitution s = new Substitution();
-        target.predicates.forEach(p -> p.renameVariables(variables, s));
+        other.predicates.forEach(p -> p.renameVariables(variables, s));
     }
 
+
+    @Override
+    public String toString() {
+        return predicates.stream().map(Object::toString)
+                .collect(Collectors.joining(" v "));
+    }
 }

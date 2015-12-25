@@ -68,7 +68,7 @@ public class Predicate {
         return this;
     }
 
-    void findUnification(Predicate other, Unification u){
+    void tryToUnify(Predicate other, Unification u){
         for (int i = 0; i < terms.size(); i++) {
             terms.get(i).subtitute(other.terms.get(i), u);
         }

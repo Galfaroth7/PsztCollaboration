@@ -1,6 +1,5 @@
 package pszt.structures;
 
-import org.junit.Before;
 import org.junit.Test;
 import pszt.parser.Parser;
 
@@ -18,11 +17,11 @@ public class UnificationTest {
         Term constant1 = new Term("M", TermType.CONSTANT);
         Unification u = new Unification();
         variable1.subtitute(constant1, u);
-        assertEquals("{x/M}", u.first.toString());
-        assertEquals("{}", u.second.toString());
+        assertEquals("{x/M}", u.sigma.toString());
+        assertEquals("{}", u.sigmaPrime.toString());
         constant1.subtitute(variable1, u);
-        assertEquals("{x/M}", u.first.toString());
-        assertEquals("{x/M}", u.second.toString());
+        assertEquals("{x/M}", u.sigma.toString());
+        assertEquals("{x/M}", u.sigmaPrime.toString());
     }
 
     @Test
@@ -89,5 +88,14 @@ public class UnificationTest {
     public void resolutionContributesTruth(){
         Clause clauseA = parser.parseClause( "A(Fun(M,x),Fun(y,N))" ), clauseB = parser.parseClause("~A(p, p)");
         assertEquals("", clauseA.performResolution(clauseB).get(0).toString());
+    }
+
+    @Test
+    public void multipleUnificationsAvailable(){
+        Clause clauseA = parser.parseClause( "A(M,x,y) v B(x,F(L),G(H,i)) v C(x,y)" )
+                , clauseB = parser.parseClause("~A(M, x, L) v B(x,F(L),G(H,i)) v ~C(K,L)");
+        List<Clause> result = clauseA.performResolution(clauseB);
+        assertEquals("Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: i)) v Pred: C(Var: var0, Const: L) v Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: var1)) v ~ Pred: C(Const: K, Const: L)", result.get(0).toString());
+        assertEquals("Pred: A(Const: M, Const: K, Const: L) v Pred: B(Const: K, Func: F(Const: L), Func: G(Const: H, Var: i)) v ~ Pred: A(Const: M, Var: var0, Const: L) v Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: var1))", result.get(1).toString());
     }
 }

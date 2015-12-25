@@ -10,8 +10,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class Term {
@@ -44,8 +42,8 @@ public class Term {
 
     public void subtitute(final Term other, final Unification substitution) {
 
-        Procedure thisIsOther = () -> substitution.first.substitute(this, other);
-        Procedure otherIsThis = () -> substitution.second.substitute(other, this);
+        Procedure thisIsOther = () -> substitution.sigma.substitute(this, other);
+        Procedure otherIsThis = () -> substitution.sigmaPrime.substitute(other, this);
 
         if (this.equals(other))
             return;
