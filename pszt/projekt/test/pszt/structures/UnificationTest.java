@@ -7,10 +7,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by hejcz on 24.12.2015.
- */
 public class UnificationTest {
+
+    Parser parser = new Parser();
 
     @Test
     public void substituteVariableByConstant(){
@@ -18,34 +17,31 @@ public class UnificationTest {
         Term constant1 = new Term("M", TermType.CONSTANT);
         Unification u = new Unification();
         variable1.subtitute(constant1, u);
-        assertEquals("{x/M}", u.first.toString());
-        assertEquals("{}", u.second.toString());
+        assertEquals("{x/M}", u.sigma.toString());
+        assertEquals("{}", u.sigmaPrime.toString());
         constant1.subtitute(variable1, u);
-        assertEquals("{x/M}", u.first.toString());
-        assertEquals("{x/M}", u.second.toString());
+        assertEquals("{x/M}", u.sigma.toString());
+        assertEquals("{x/M}", u.sigmaPrime.toString());
     }
 
     @Test
     public void clauseConstantVariableUnification(){
-        Parser p = new Parser();
-        Clause c1 = p.parseClause("A(z) v ~B(z, M)");
-        Clause c2 =  p.parseClause("B(N, y) v C(y)");
+        Clause c1 = parser.parseClause("A(z) v ~B(z, M)");
+        Clause c2 =  parser.parseClause("B(N, y) v C(y)");
         c1.performResolution(c2);
     }
 
     @Test
     public void clauseConstantAndVariableVariableUnification(){
-        Parser p = new Parser();
-        Clause c1 = p.parseClause("A(z) v ~B(z, M)");
-        Clause c2 =  p.parseClause("B(x, y) v C(y)");
+        Clause c1 = parser.parseClause("A(z) v ~B(z, M)");
+        Clause c2 =  parser.parseClause("B(x, y) v C(y)");
         c1.performResolution(c2);
     }
 
     @Test
     public void harderTest(){
-        Parser p = new Parser();
-        Clause c1 = p.parseClause("A(x, y) v B(x, M) ");
-        Clause c2 =  p.parseClause("~B(F(x), x) v C(x, y)");
+        Clause c1 = parser.parseClause("A(x, y) v B(x, M) ");
+        Clause c2 =  parser.parseClause("~B(F(x), x) v C(x, y)");
         List<Clause> clauses = c1.performResolution(c2);
         assertEquals("Pred: A(Func: F(Const: M), Var: y) v Pred: C(Const: M, Var: var1)",
                 clauses.get(0).toString());
@@ -53,9 +49,8 @@ public class UnificationTest {
 
     @Test
     public void harderTest2(){
-        Parser p = new Parser();
-        Clause c1 = p.parseClause("A(x, y) v B(F(x, y), y) ");
-        Clause c2 =  p.parseClause("~B(x, M) v C(x, y)");
+        Clause c1 = parser.parseClause("A(x, y) v B(F(x, y), y) ");
+        Clause c2 =  parser.parseClause("~B(x, M) v C(x, y)");
         List<Clause> clauses = c1.performResolution(c2);
         assertEquals("Pred: A(Var: x, Const: M) v Pred: C(Func: F(Var: x, Const: M), Var: var1)",
                 clauses.get(0).toString());
@@ -63,8 +58,7 @@ public class UnificationTest {
 
     @Test
     public void prepareToLecture(){
-        Parser p = new Parser();
-        List<Clause> clauses = p.parseClausesFromFile("resources/test.in");
+        List<Clause> clauses = parser.parseClausesFromFile("resources/test.in");
         String expected = "Pred: A(Const: N) v Pred: C(Const: M)\n" +
                 "Pred: A(Var: x, Var: y, Var: z) v Pred: C(Func: F(Var: x), Const: M, Var: var2)\n" +
                 "Pred: A(Var: x) v Pred: C(Const: M)\n" +
@@ -82,5 +76,26 @@ public class UnificationTest {
         }
         result.setLength( result.length() - 1 );
         assertEquals(expected, result.toString() );
+    }
+
+    @Test
+    public void unificationNotPossible(){
+        Clause clauseA = parser.parseClause( "A(Fun(M,x),Fun(H,N))" ), clauseB = parser.parseClause("~A(p,p)");
+        assertEquals(0, clauseA.performResolution(clauseB).size());
+    }
+
+    @Test
+    public void resolutionContributesTruth(){
+        Clause clauseA = parser.parseClause( "A(Fun(M,x),Fun(y,N))" ), clauseB = parser.parseClause("~A(p, p)");
+        assertEquals("", clauseA.performResolution(clauseB).get(0).toString());
+    }
+
+    @Test
+    public void multipleUnificationsAvailable(){
+        Clause clauseA = parser.parseClause( "A(M,x,y) v B(x,F(L),G(H,i)) v C(x,y)" )
+                , clauseB = parser.parseClause("~A(M, x, L) v B(x,F(L),G(H,i)) v ~C(K,L)");
+        List<Clause> result = clauseA.performResolution(clauseB);
+        assertEquals("Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: i)) v Pred: C(Var: var0, Const: L) v Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: var1)) v ~ Pred: C(Const: K, Const: L)", result.get(0).toString());
+        assertEquals("Pred: A(Const: M, Const: K, Const: L) v Pred: B(Const: K, Func: F(Const: L), Func: G(Const: H, Var: i)) v ~ Pred: A(Const: M, Var: var0, Const: L) v Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: var1))", result.get(1).toString());
     }
 }
