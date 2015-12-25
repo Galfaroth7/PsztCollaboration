@@ -42,30 +42,31 @@ public class Term {
         this.arguments.addAll(arguments);
     }
 
-    public void subtitute(final Term other, final Unification substitution){
+    public void subtitute(final Term other, final Unification substitution) {
 
         Procedure thisIsOther = () -> substitution.first.substitute(this, other);
         Procedure otherIsThis = () -> substitution.second.substitute(other, this);
 
-        if(this.equals(other))
+        if (this.equals(other))
             return;
-        else if(this.type == TermType.VARIABLE && other.type == TermType.CONSTANT)
+        else if (this.type == TermType.VARIABLE && other.type == TermType.CONSTANT)
             thisIsOther.execute();
-        else if(this.type == TermType.CONSTANT && other.type == TermType.VARIABLE)
+        else if (this.type == TermType.CONSTANT && other.type == TermType.VARIABLE)
             otherIsThis.execute();
-        else if(this.type == TermType.VARIABLE && other.type == TermType.FUNCTION)
+        else if (this.type == TermType.VARIABLE && other.type == TermType.FUNCTION)
             thisIsOther.execute();
-        else if(this.type == TermType.FUNCTION && other.type == TermType.VARIABLE)
+        else if (this.type == TermType.FUNCTION && other.type == TermType.VARIABLE)
             otherIsThis.execute();
         else if (this.type == TermType.VARIABLE && other.type == TermType.VARIABLE)
             thisIsOther.execute();
-        else if(this.type == TermType.FUNCTION && other.type == TermType.FUNCTION){
+        else if (this.type == TermType.FUNCTION && other.type == TermType.FUNCTION) {
             for (int i = 0; i < this.arguments.size(); i++) {
                 this.arguments.get(i).subtitute(other.arguments.get(i), substitution);
             }
-        } else if(this.type == TermType.CONSTANT && other.type == TermType.CONSTANT){
+        } else {
             throw new UnificationNotFoundException();
         }
+
     }
 
     String getName() {
