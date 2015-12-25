@@ -47,7 +47,9 @@ public class Term {
         Procedure thisIsOther = () -> substitution.first.substitute(this, other);
         Procedure otherIsThis = () -> substitution.second.substitute(other, this);
 
-        if(this.type == TermType.VARIABLE && other.type == TermType.CONSTANT)
+        if(this.equals(other))
+            return;
+        else if(this.type == TermType.VARIABLE && other.type == TermType.CONSTANT)
             thisIsOther.execute();
         else if(this.type == TermType.CONSTANT && other.type == TermType.VARIABLE)
             otherIsThis.execute();
@@ -61,6 +63,8 @@ public class Term {
             for (int i = 0; i < this.arguments.size(); i++) {
                 this.arguments.get(i).subtitute(other.arguments.get(i), substitution);
             }
+        } else if(this.type == TermType.CONSTANT && other.type == TermType.CONSTANT){
+            throw new UnificationNotFoundException();
         }
     }
 
