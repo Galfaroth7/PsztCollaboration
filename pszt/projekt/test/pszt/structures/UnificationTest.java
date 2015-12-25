@@ -65,8 +65,22 @@ public class UnificationTest {
     public void prepareToLecture(){
         Parser p = new Parser();
         List<Clause> clauses = p.parseClausesFromFile("resources/test.in");
+        String expected = "Pred: A(Const: N) v Pred: C(Const: M)\n" +
+                "Pred: A(Var: x, Var: y, Var: z) v Pred: C(Func: F(Var: x), Const: M, Var: var2)\n" +
+                "Pred: A(Var: x) v Pred: C(Const: M)\n" +
+                "Pred: A(Func: F(Const: M), Var: y) v Pred: C(Const: M, Var: var1)\n" +
+                "Pred: A(Const: M, Var: y) v Pred: A(Var: var0, Func: F(Const: M))\n" +
+                "Pred: A(Var: x, Var: y, Var: z) v Pred: C(Func: F(Var: y), Const: M, Var: var2)\n" +
+                "Pred: A(Func: F(Var: var0), Func: F(Const: M)) v Pred: C(Var: var0, Var: var1)\n" +
+                "Pred: A(Var: x, Var: y, Var: z) v Pred: C(Func: F(Var: x), Const: M, Var: var2)\n" +
+                "Pred: A(Var: x, Const: M) v Pred: C(Func: F(Func: F(Var: x)), Var: var1)\n" +
+                "Pred: A(Var: x, Const: M) v Pred: C(Func: F(Var: x, Const: M), Var: var1)";
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < clauses.size(); i+=2) {
-            clauses.get(i).performResolution(clauses.get(i+1)).forEach(System.out::println);
+            List<Clause> resolutionResult = clauses.get(i).performResolution(clauses.get(i+1));
+            resolutionResult.forEach( c -> result.append(c).append("\n") );
         }
+        result.setLength( result.length() - 1 );
+        assertEquals(expected, result.toString() );
     }
 }
