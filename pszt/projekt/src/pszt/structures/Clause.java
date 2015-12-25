@@ -13,11 +13,9 @@ public class Clause {
     
     private List<Predicate> predicates = new LinkedList<>();
 
-    public Clause(){
+    public Clause(){}
 
-    }
-
-    Clause(Clause origin){
+    public Clause(Clause origin){
         origin.predicates.forEach(p -> this.predicates.add(new Predicate(p)));
     }
 
