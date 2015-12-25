@@ -1,0 +1,16 @@
+PODSTAWIENIE
+Przypisanie TERMU do ZMIENNEJ.
+
+UNIFIKATOR
+PARA podstawień, doprowadzająca dwie (PARY FORMUŁ)??? do wspólnej postaci 
+( takiej, ze są sobie równe ).
+
+Można znaleźć unifikator <=> Para jest UNIFIKOWALNA. 
+
+NAJBARDZIEJ OGÓLNY UNIFIKATOR
+UNIFIKATOR przekształcający formuły do postaci prawdziwej dla jak najszerszego
+zbioru obiektów. 
+
+ZASADY
+Zawsze najpierw próbujemy podstawić po zmienną inną zmienną. Dopiero w następnej
+kolejności rozważamy podstawianie stałych.

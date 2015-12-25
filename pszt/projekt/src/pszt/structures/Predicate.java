@@ -1,0 +1,107 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package pszt.structures;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Predicate {
+
+    private final String name;
+    private final List<Term> terms;
+    private boolean isNegated;
+
+    public Predicate(String name) {
+        this.name = name;
+        this.terms = new LinkedList<>();
+    }
+
+    public Predicate(Predicate origin){
+        this.name = origin.name;
+        this.isNegated = origin.isNegated();
+        this.terms = new LinkedList<>();
+        origin.terms.forEach(x -> terms.add(new Term(x)));
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public void addTerm(Term t) {
+        terms.add(t);
+    }
+    
+    public void addTerms(List<Term> terms){
+        this.terms.addAll(terms);
+    }
+    
+    public void isNegated(boolean value) {
+        this.isNegated = value;
+    }
+    
+    public boolean isNegated() {
+        return this.isNegated;
+    }
+
+    public boolean isNegationOf(Predicate other){
+        return this.name.equals(other.name)
+                && this.isNegated != other.isNegated;
+    }
+
+    boolean equals(Predicate other){
+        boolean ret = this.name.equals(other.name);
+        if(!ret)
+            return false;
+        for (int i = 0; i < terms.size(); i++) {
+            if(!terms.get(i).equals(other.terms.get(i)))
+                return false;
+        }
+        return ret;
+    }
+
+    void applySubstitution(Substitution substitution){
+        terms.forEach(t -> t.applySubstitution(substitution));
+    }
+
+    void findUnification(Predicate other, Unification u){
+        for (int i = 0; i < terms.size(); i++) {
+            terms.get(i).subtitute(other.terms.get(i), u);
+        }
+    }
+
+    Set<String> getAllVariables(){
+        Set<String> ret = new HashSet<>();
+        for(Term t: terms){
+            ret.addAll(t.getVariables());
+        }
+        return ret;
+    }
+
+    void renameVariables(Set<String> forbiddenNames, final Substitution s){
+
+        this.getAllVariables().stream()
+                .filter(v -> forbiddenNames.contains(v))
+                .forEach(p -> {
+                    int index = 0;
+                    if(s.getSubstituteOf(p) == null){
+                        while(forbiddenNames.contains("var" + index++));
+                        String newName = "var" + (index - 1);
+                        s.substitute(new Term(p, TermType.VARIABLE)
+                                , new Term(newName, TermType.VARIABLE));
+                        forbiddenNames.add(newName);
+                    }
+                });
+        this.applySubstitution(s);
+
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%sPred: %s(%s)", isNegated?"~ ":"",name, terms.stream().map(Object::toString).collect(Collectors.joining(", ")));
+    }
+    
+}
