@@ -114,10 +114,10 @@ public class UnificationTest {
         assertEquals("Pred: A(Var: y)", clauseB.performResolution(clauseA).get(0).toString());
     }
 
-    @Test(expected = ClauseEvaluatedToTrueException.class)
+    @Test
     public void resolutionResultEvaluatedToTrue(){
         Clause clauseA = parser.parseClause("A(x) v B(x,y)");
         Clause clauseB = parser.parseClause("~B(h, x) v ~A(z)");
-        new Clause(clauseA).performResolution(new Clause(clauseB)).size();
+        assertEquals(0, new Clause(clauseA).performResolution(new Clause(clauseB)).size());
     }
 }
