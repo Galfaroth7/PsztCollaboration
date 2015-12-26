@@ -25,7 +25,7 @@ public class Clause implements Comparable<Clause> {
         return Collections.unmodifiableList(predicates);
     }
 
-    public List<Clause> performResolution(Clause other) throws ContraditionException {
+    public List<Clause> performResolution(Clause other) throws ContraditionException{
         List<Clause> result = new ArrayList<>(this.predicates.size());
         renameVariables(other);
         for (Predicate thisPredicate : this.predicates) {
@@ -33,7 +33,7 @@ public class Clause implements Comparable<Clause> {
                 if(thisPredicate.isNegated(otherPredicate)){
                     Unification unification = findUnification(new Predicate(thisPredicate), new Predicate(otherPredicate));
                     if (unification == null) continue;
-                    if(this.predicates.size() == 1)
+                    if(this.predicates.size() == 1 && other.predicates.size() == 1)
                         throw new ContraditionException();
                     Clause resolution = new Clause();
                     resolution.add(adjustPredicates(new Clause(this), unification.sigma, thisPredicate));
@@ -42,7 +42,7 @@ public class Clause implements Comparable<Clause> {
                         resolution.removeDuplicates();
                         result.add(resolution);
                     }catch (ClauseEvaluatedToTrueException ex){
-                        // if the exception was thrown, this clause gives us true
+                        //we add nothing to result
                     }
                 }
             }
