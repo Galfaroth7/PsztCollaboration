@@ -72,7 +72,15 @@ public class ResolvingMachine
 	{
 		for (ClauseWrapper knowledge : knowledgeBase)
 		{
-			List<Clause> resolvedClauses = cell.getClause().performResolution(knowledge.getClause());
+			List<Clause> resolvedClauses = null;
+			try
+			{
+				resolvedClauses = cell.getClause().performResolution(knowledge.getClause());
+			}
+			catch(ContraditionException e)
+			{
+				return new ClauseWrapper(cell.getClause(),cell,knowledge);
+			}
 			if(shortest)
 			{
 				Collections.sort(resolvedClauses);
@@ -81,22 +89,24 @@ public class ResolvingMachine
 			{
 				for(Clause resolved : resolvedClauses)
 				{
-					try
-					{
+					
 						ClauseWrapper newCell = new ClauseWrapper(resolved,cell,knowledge);
 						ClauseWrapper resolvent = recursiveResolve(newCell,shortest);
-						if(resolvent == null)
-						{
-							continue;
-						}
-						if(resolvent.getClause().getPredicates().isEmpty())
+						//if(resolvent == null)
+						//{
+						//	continue;
+						//}
+						//if(resolvent.getClause().getPredicates().isEmpty())
+						//{
+						//	return resolvent;
+						//}
+						if(resolvent!=null)
 						{
 							return resolvent;
 						}
 					}
-					
 				}
-			}
+			
 		}
 		return null;
 	}
