@@ -107,15 +107,6 @@ public class Clause implements Comparable<Clause> {
         Substitution substitution = new Substitution();
         other.predicates.forEach(predicate -> predicate.renameVariables(forbiddenVariables, substitution));
     }
-    private Clause deleteRedundancy()
-    {
-    	Clause notRedundant;
-    	for(int overlapping = 0; overlapping < predicates.size(); ++overlapping)
-    	{
-    		
-    	}
-    	return null;
-    }
 
     @Override
     public String toString() {
