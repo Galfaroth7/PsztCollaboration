@@ -84,10 +84,10 @@ public class UnificationTest {
         assertEquals(0, clauseA.performResolution(clauseB).size());
     }
 
-    @Test
+    @Test(expected = ContraditionException.class)
     public void resolutionContributesTruth(){
         Clause clauseA = parser.parseClause( "A(Fun(M,x),Fun(y,N))" ), clauseB = parser.parseClause("~A(p, p)");
-        assertEquals("", clauseA.performResolution(clauseB).get(0).toString());
+        clauseA.performResolution(clauseB);
     }
 
     @Test

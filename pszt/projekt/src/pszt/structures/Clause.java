@@ -33,6 +33,8 @@ public class Clause implements Comparable<Clause> {
                 if(thisPredicate.isNegated(otherPredicate)){
                     Unification unification = findUnification(new Predicate(thisPredicate), new Predicate(otherPredicate));
                     if (unification == null) continue;
+                    if(this.predicates.size() == 1 && other.predicates.size() == 1)
+                        throw new ContraditionException();
                     Clause resolution = new Clause();
                     resolution.add(adjustPredicates(new Clause(this), unification.sigma, thisPredicate));
                     resolution.add(adjustPredicates(new Clause(other), unification.sigmaPrime, otherPredicate));
@@ -114,6 +116,7 @@ public class Clause implements Comparable<Clause> {
                 .map(Object::toString)
                 .collect(Collectors.joining(" v "));
     }
+
     @Override
     public int compareTo(Clause o) {
         // TODO Auto-generated method stub
