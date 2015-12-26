@@ -16,10 +16,10 @@ public class UnificationTest {
         Term variable1 = new Term("x", TermType.VARIABLE);
         Term constant1 = new Term("M", TermType.CONSTANT);
         Unification u = new Unification();
-        variable1.subtitute(constant1, u);
+        variable1.substitute(constant1, u);
         assertEquals("{x/M}", u.sigma.toString());
         assertEquals("{}", u.sigmaPrime.toString());
-        constant1.subtitute(variable1, u);
+        constant1.substitute(variable1, u);
         assertEquals("{x/M}", u.sigma.toString());
         assertEquals("{x/M}", u.sigmaPrime.toString());
     }
@@ -97,5 +97,12 @@ public class UnificationTest {
         List<Clause> result = clauseA.performResolution(clauseB);
         assertEquals("Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: i)) v Pred: C(Var: var0, Const: L) v Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: var1)) v ~ Pred: C(Const: K, Const: L)", result.get(0).toString());
         assertEquals("Pred: A(Const: M, Const: K, Const: L) v Pred: B(Const: K, Func: F(Const: L), Func: G(Const: H, Var: i)) v ~ Pred: A(Const: M, Var: var0, Const: L) v Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: var1))", result.get(1).toString());
+    }
+
+    @Test
+    public void complexClauses(){
+        Clause clauseA = parser.parseClause("PRED(Fun(x, G(i,j)), x, j)");
+        Clause clauseB = parser.parseClause("~PRED(y, K, L) v POL(y)");
+        assertEquals("Pred: POL(Func: Fun(Const: K, Func: G(Var: i, Const: L)))", clauseA.performResolution(clauseB).get(0).toString());
     }
 }

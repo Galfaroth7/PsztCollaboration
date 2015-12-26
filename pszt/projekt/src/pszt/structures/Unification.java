@@ -12,12 +12,12 @@ public class Unification {
         return String.format("%s%n%s", sigma.toString(), sigmaPrime.toString());
     }
 
-    public void clear() {
+    public void prepareForNewIteration() {
         sigma.clear();
         sigmaPrime.clear();
     }
 
-    void loadOverallUnification(){
+    void loadResult(){
         sigma.swap();
         sigmaPrime.swap();
     }
