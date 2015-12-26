@@ -10,15 +10,17 @@ public class Application
 	static ResolvingMachine resolver = new ResolvingMachine();
 	public static void main(String[] args)
 	{
-		resolver.addKnowledgeBase(parser.parseClausesFromFile("resources/KnowledgeBase.in"));
-		resolver.addTheses(parser.parseClausesFromFile("resources/thesis.in"));
+		resolver.addKnowledgeBase(parser.parseClausesFromFile("resources/KnowledgeBase1.in"));
+		resolver.addTheses(parser.parseClausesFromFile("resources/thesis1.in"));
 		List<ClauseWrapper> result = resolver.linearResolver(false);
 		try
 		{
-			PrintWriter out = new PrintWriter("resources/result.out");
+			PrintWriter out = new PrintWriter("resources/result1.out");
 			for (ClauseWrapper node : result)
 			{
-				out.print(node.toString());
+				String text = node.toString();
+				System.out.print(text);
+				out.print(text);
 			}
 			out.close();
 		}

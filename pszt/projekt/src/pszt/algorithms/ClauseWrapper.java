@@ -60,28 +60,30 @@ public class ClauseWrapper  implements Comparable<ClauseWrapper>
 	public String toString()
 	{
 		String returned = new String();
-		recursiveToString(returned, this);
+		returned = recursiveToString(this);
 		return returned;
 	}
-	private void recursiveToString(String source, ClauseWrapper node)
+	private String recursiveToString(ClauseWrapper node)
 	{
-		source +="clause :" +  node.getClause().toString()+ "\n";
+		String clauseString = new String();
+		clauseString += "clause :" +  node.getClause().toString()+ "\n";
 		if(node.getFirstParent() !=null)
 		{
-			source += "firstParent : " + node.getFirstParent().getClause().toString() + "\n";
+			clauseString += "firstParent : " + node.getFirstParent().getClause().toString() + "\n";
 		}
 		if(node.getSecondParent() != null)
 		{
-			source += "secondParent : " + node.getSecondParent().getClause().toString() + "\n";
+			clauseString += "secondParent : " + node.getSecondParent().getClause().toString() + "\n";
 		}
 		if(node.getFirstParent() != null)
 		{
-			recursiveToString(source, node.getFirstParent());
+			clauseString += recursiveToString(node.getFirstParent());
 		}
 		if(node.getSecondParent() != null)
 		{
-			recursiveToString(source, node.getSecondParent());
+			clauseString += recursiveToString(node.getSecondParent());
 		}
+		return clauseString;
 	}
 	/**
 	 * implementacja interfejsu Comparable
