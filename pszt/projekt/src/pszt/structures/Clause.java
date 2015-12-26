@@ -107,7 +107,6 @@ public class Clause implements Comparable<Clause> {
         Substitution substitution = new Substitution();
         other.predicates.forEach(predicate -> predicate.renameVariables(forbiddenVariables, substitution));
     }
-<<<<<<< HEAD
     private Clause deleteRedundancy()
     {
     	Clause notRedundant;
@@ -117,8 +116,6 @@ public class Clause implements Comparable<Clause> {
     	}
     	return null;
     }
-=======
->>>>>>> refs/remotes/origin/refactorizations
 
     @Override
     public String toString() {
@@ -126,13 +123,9 @@ public class Clause implements Comparable<Clause> {
                 .map(Object::toString)
                 .collect(Collectors.joining(" v "));
     }
-<<<<<<< HEAD
-	@Override
-	public int compareTo(Clause o) {
-		// TODO Auto-generated method stub
-		return predicates.size() - o.getPredicates().size();
-	}
+    @Override
+    public int compareTo(Clause o) {
+        // TODO Auto-generated method stub
+        return predicates.size() - o.getPredicates().size();
+    }
 }
-=======
-}
->>>>>>> refs/remotes/origin/refactorizations
