@@ -1,0 +1,7 @@
+A(x)
+B(x)
+~A(x) v ~B(x) v ~C(x)
+~B(x) v C(x) v D(x)
+~A(x) v ~D(x) v E(x)
+~B(x) v ~E(x) v H(x)
+~H(x) v ~D(x) v A(x)
