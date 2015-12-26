@@ -63,6 +63,17 @@ public class Predicate {
         return ret;
     }
 
+    boolean equalsWithoutVariablesName(Predicate other){
+        boolean ret = this.name.equals(other.name);
+        if(!ret)
+            return false;
+        for (int i = 0; i < terms.size(); i++) {
+            if(!terms.get(i).equalsWithoutVariablesName(other.terms.get(i)))
+                return false;
+        }
+        return ret;
+    }
+
     Predicate applySubstitution(Substitution substitution){
         terms.forEach(t -> t.applySubstitution(substitution));
         return this;
