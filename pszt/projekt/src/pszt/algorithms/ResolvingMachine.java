@@ -64,7 +64,7 @@ public class ResolvingMachine
 	}
 	/**
 	 * rekursywna metoda rezolucji
-	 * @param cell element drzewa decyzyjnego ktory wywolal rezolucje
+	 * @param cell element drzewa rezolucji ktory wywolal rezolucje
 	 * @param shortest czy jest preferencja dla krotkich klauzul
 	 * @return wywnioskowane drzewo dowodu lub null
 	 */
@@ -81,17 +81,20 @@ public class ResolvingMachine
 			{
 				for(Clause resolved : resolvedClauses)
 				{
+					try
+					{
+						ClauseWrapper newCell = new ClauseWrapper(resolved,cell,knowledge);
+						ClauseWrapper resolvent = recursiveResolve(newCell,shortest);
+						if(resolvent == null)
+						{
+							continue;
+						}
+						if(resolvent.getClause().getPredicates().isEmpty())
+						{
+							return resolvent;
+						}
+					}
 					
-					ClauseWrapper newCell = new ClauseWrapper(resolved,cell,knowledge);
-					ClauseWrapper resolvent = recursiveResolve(newCell,shortest);
-					if(resolvent == null)
-					{
-						continue;
-					}
-					if(resolvent.getClause().getPredicates().isEmpty())
-					{
-						return resolvent;
-					}
 				}
 			}
 		}
