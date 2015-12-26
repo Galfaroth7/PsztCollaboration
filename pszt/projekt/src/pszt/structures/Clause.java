@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package pszt.structures;
 
 import java.util.*;
@@ -19,11 +13,11 @@ public class Clause {
         origin.predicates.forEach(p -> this.predicates.add(new Predicate(p)));
     }
 
-    public void addPredicate(Predicate p) {
-        predicates.add(p);
+    public void add(Predicate predicate) {
+        this.predicates.add(predicate);
     }
 
-    public void addPredicates(Collection<Predicate> predicates) {
+    public void add(Collection<Predicate> predicates) {
         this.predicates.addAll(predicates);
     }
     
@@ -32,16 +26,16 @@ public class Clause {
     }
 
     public List<Clause> performResolution(Clause other){
-        List<Clause> result = new ArrayList<>(predicates.size());
+        List<Clause> result = new ArrayList<>(this.predicates.size());
         renameVariables(other);
         for (Predicate thisPredicate : this.predicates) {
             for (Predicate otherPredicate : other.predicates) {
-                if(thisPredicate.isNegationOf(otherPredicate)){
+                if(thisPredicate.isNegated(otherPredicate)){
                     Unification unification = findUnification(new Predicate(thisPredicate), new Predicate(otherPredicate));
                     if (unification == null) continue;
                     Clause resolution = new Clause();
-                    resolution.addPredicates(adjustPredicates(new Clause(this), unification.sigma, thisPredicate));
-                    resolution.addPredicates(adjustPredicates(new Clause(other), unification.sigmaPrime, otherPredicate));
+                    resolution.add(adjustPredicates(new Clause(this), unification.sigma, thisPredicate));
+                    resolution.add(adjustPredicates(new Clause(other), unification.sigmaPrime, otherPredicate));
                     result.add(resolution);
                 }
             }
@@ -63,26 +57,28 @@ public class Clause {
                 copyA.tryToUnify(copyB, unification);
                 copyA.applySubstitution(unification.sigma);
                 copyB.applySubstitution(unification.sigmaPrime);
-                unification.clear();
+                unification.prepareForNewIteration();
             }
-        }catch(UnificationNotFoundException e){
+        } catch(UnificationNotFoundException e){
             return null;
         }
-        unification.loadOverallUnification();
+        unification.loadResult();
         return unification;
     }
 
     private void renameVariables(Clause other) {
-        Set<String> variables = new HashSet<>();
-        this.predicates.forEach(p -> variables.addAll(p.getAllVariables()));
-        Substitution s = new Substitution();
-        other.predicates.forEach(p -> p.renameVariables(variables, s));
+        Set<String> forbiddenVariables = this.predicates.stream()
+                .map( Predicate::getAllVariables )
+                .flatMap( Set::stream )
+                .collect( Collectors.toSet() );
+        Substitution substitution = new Substitution();
+        other.predicates.forEach(predicate -> predicate.renameVariables(forbiddenVariables, substitution));
     }
-
 
     @Override
     public String toString() {
-        return predicates.stream().map(Object::toString)
+        return predicates.stream()
+                .map(Object::toString)
                 .collect(Collectors.joining(" v "));
     }
 }

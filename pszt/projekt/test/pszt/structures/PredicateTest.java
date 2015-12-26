@@ -40,15 +40,15 @@ public class PredicateTest {
         Predicate p1 = new Predicate("ALA"), p2 = new Predicate("ALA");
         Predicate r1 = new Predicate("ALB"), r2 = new Predicate("ALB");
         p1.isNegated(true);
-        assertEquals(true, p1.isNegationOf(p2));
-        assertEquals(true, p2.isNegationOf(p1));
-        assertEquals(false, p1.isNegationOf(r1));
-        assertEquals(false, r1.isNegationOf(p1));
-        assertEquals(false, p1.isNegationOf(p1));
-        assertEquals(false, r1.isNegationOf(r2));
-        assertEquals(false, r2.isNegationOf(r1));
+        assertEquals(true, p1.isNegated(p2));
+        assertEquals(true, p2.isNegated(p1));
+        assertEquals(false, p1.isNegated(r1));
+        assertEquals(false, r1.isNegated(p1));
+        assertEquals(false, p1.isNegated(p1));
+        assertEquals(false, r1.isNegated(r2));
+        assertEquals(false, r2.isNegated(r1));
         r2.isNegated(true);
-        assertEquals(true, r1.isNegationOf(r2));
-        assertEquals(true, r2.isNegationOf(r1));
+        assertEquals(true, r1.isNegated(r2));
+        assertEquals(true, r2.isNegated(r1));
     }
 }

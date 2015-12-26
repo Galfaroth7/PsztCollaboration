@@ -53,7 +53,7 @@ public class Parser {
         String[] predicatesToParse = toParse.replaceAll(" ", "").split(CLAUSE_DELIMITER);
         Clause clause = new Clause();
         for(String predicate : predicatesToParse){
-            clause.addPredicate(parsePredicate(predicate));
+            clause.add(parsePredicate(predicate));
         }
         return clause;
     }

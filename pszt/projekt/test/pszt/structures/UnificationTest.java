@@ -16,10 +16,10 @@ public class UnificationTest {
         Term variable1 = new Term("x", TermType.VARIABLE);
         Term constant1 = new Term("M", TermType.CONSTANT);
         Unification u = new Unification();
-        variable1.subtitute(constant1, u);
+        variable1.substitute(constant1, u);
         assertEquals("{x/M}", u.sigma.toString());
         assertEquals("{}", u.sigmaPrime.toString());
-        constant1.subtitute(variable1, u);
+        constant1.substitute(variable1, u);
         assertEquals("{x/M}", u.sigma.toString());
         assertEquals("{x/M}", u.sigmaPrime.toString());
     }

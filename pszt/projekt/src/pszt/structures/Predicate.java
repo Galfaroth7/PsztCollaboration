@@ -47,9 +47,9 @@ public class Predicate {
         return this.isNegated;
     }
 
-    public boolean isNegationOf(Predicate other){
-        return this.name.equals(other.name)
-                && this.isNegated != other.isNegated;
+    public boolean isNegated(Predicate other){
+        return this.isNegated != other.isNegated
+            && this.name.equals(other.name);
     }
 
     boolean equals(Predicate other){
@@ -70,7 +70,7 @@ public class Predicate {
 
     void tryToUnify(Predicate other, Unification u){
         for (int i = 0; i < terms.size(); i++) {
-            terms.get(i).subtitute(other.terms.get(i), u);
+            terms.get(i).substitute(other.terms.get(i), u);
         }
     }
 
@@ -85,7 +85,7 @@ public class Predicate {
     void renameVariables(Set<String> forbiddenNames, final Substitution s){
 
         this.getAllVariables().stream()
-                .filter(v -> forbiddenNames.contains(v))
+                .filter(forbiddenNames::contains)
                 .forEach(p -> {
                     int index = 0;
                     if(s.getSubstituteOf(p) == null){
