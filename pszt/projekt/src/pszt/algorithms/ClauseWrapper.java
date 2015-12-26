@@ -22,10 +22,8 @@ public class ClauseWrapper  implements Comparable<ClauseWrapper>
 	public ClauseWrapper(Clause wrappedClause, ClauseWrapper parentClause1, ClauseWrapper parentClause2)
 	{
 		wrapped = new Clause(wrappedClause);
-		if(parentClause1!= null)
-			firstParent = new ClauseWrapper(parentClause1);
-		if(parentClause2!= null)
-			secondParent = new ClauseWrapper(parentClause2);
+		firstParent  = parentClause1;
+		secondParent = parentClause2;
 	}
 	 /**
 	  * konstruktor kopiujacy, uzywany w powyzszym
@@ -33,11 +31,9 @@ public class ClauseWrapper  implements Comparable<ClauseWrapper>
 	  */
 	ClauseWrapper(ClauseWrapper other)
 	{
-		wrapped = new Clause(other.getClause());
-		if(other.getFirstParent() != null)
-			firstParent = new ClauseWrapper(other.getFirstParent());
-		if(other.getSecondParent() != null)
-			secondParent = new ClauseWrapper(other.getSecondParent());
+		wrapped = other.getClause();
+		firstParent = other.getFirstParent();
+		secondParent = other.getSecondParent();
 	}
 	/**
 	 * 
@@ -60,6 +56,32 @@ public class ClauseWrapper  implements Comparable<ClauseWrapper>
 	public ClauseWrapper getSecondParent()
 	{
 		return secondParent;
+	}
+	public String toString()
+	{
+		String returned = new String();
+		recursiveToString(returned, this);
+		return returned;
+	}
+	private void recursiveToString(String source, ClauseWrapper node)
+	{
+		source +="clause :" +  node.getClause().toString()+ "\n";
+		if(node.getFirstParent() !=null)
+		{
+			source += "firstParent : " + node.getFirstParent().getClause().toString() + "\n";
+		}
+		if(node.getSecondParent() != null)
+		{
+			source += "secondParent : " + node.getSecondParent().getClause().toString() + "\n";
+		}
+		if(node.getFirstParent() != null)
+		{
+			recursiveToString(source, node.getFirstParent());
+		}
+		if(node.getSecondParent() != null)
+		{
+			recursiveToString(source, node.getSecondParent());
+		}
 	}
 	/**
 	 * implementacja interfejsu Comparable

@@ -12,8 +12,8 @@ import pszt.structures.*;
  */
 public class ResolvingMachine 
 {
-	List<ClauseWrapper> theses;
-	List<ClauseWrapper> knowledgeBase;
+	List<ClauseWrapper> theses = new LinkedList<ClauseWrapper>();
+	List<ClauseWrapper> knowledgeBase= new LinkedList<ClauseWrapper>();
 	/**
 	 * funkcja sluzaca do prowadzenia rezolucji
 	 * 
@@ -84,9 +84,13 @@ public class ResolvingMachine
 					
 					ClauseWrapper newCell = new ClauseWrapper(resolved,cell,knowledge);
 					ClauseWrapper resolvent = recursiveResolve(newCell,shortest);
+					if(resolvent == null)
+					{
+						continue;
+					}
 					if(resolvent.getClause().getPredicates().isEmpty())
 					{
-						return newCell;
+						return resolvent;
 					}
 				}
 			}
