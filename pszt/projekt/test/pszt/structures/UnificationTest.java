@@ -96,7 +96,7 @@ public class UnificationTest {
                 , clauseB = parser.parseClause("~A(M, x, L) v B(x,F(L),G(H,i)) v ~C(K,L)");
         List<Clause> result = clauseA.performResolution(clauseB);
         assertEquals("Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: i)) v Pred: C(Var: var0, Const: L) v Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: var1)) v ~ Pred: C(Const: K, Const: L)", result.get(0).toString());
-        assertEquals("Pred: A(Const: M, Const: K, Const: L) v Pred: B(Const: K, Func: F(Const: L), Func: G(Const: H, Var: i)) v ~ Pred: A(Const: M, Var: var0, Const: L) v Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: var1))", result.get(1).toString());
+        assertEquals("Pred: A(Const: M, Const: K, Const: L) v ~ Pred: A(Const: M, Var: var0, Const: L) v Pred: B(Var: var0, Func: F(Const: L), Func: G(Const: H, Var: var1))", result.get(1).toString());
     }
 
     @Test
@@ -104,5 +104,20 @@ public class UnificationTest {
         Clause clauseA = parser.parseClause("PRED(Fun(x, G(i,j)), x, j)");
         Clause clauseB = parser.parseClause("~PRED(y, K, L) v POL(y)");
         assertEquals("Pred: POL(Func: Fun(Const: K, Func: G(Var: i, Const: L)))", clauseA.performResolution(clauseB).get(0).toString());
+    }
+
+    @Test
+    public void redundantPredicatesFromFinalResolution(){
+        Clause clauseA = parser.parseClause("A(x) v B(x,y)");
+        Clause clauseB = parser.parseClause("~B(L, x) v A(x)");
+        assertEquals("Pred: A(Var: var0)", new Clause(clauseA).performResolution(new Clause(clauseB)).get(0).toString());
+        assertEquals("Pred: A(Var: y)", clauseB.performResolution(clauseA).get(0).toString());
+    }
+
+    @Test
+    public void resolutionResultEvaluatedToTrue(){
+        Clause clauseA = parser.parseClause("A(x) v B(x,y)");
+        Clause clauseB = parser.parseClause("~B(h, x) v ~A(z)");
+        assertEquals(0, new Clause(clauseA).performResolution(new Clause(clauseB)).size());
     }
 }

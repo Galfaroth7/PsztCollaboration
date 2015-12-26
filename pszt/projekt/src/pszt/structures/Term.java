@@ -138,4 +138,23 @@ public class Term {
         }
         return "Func: " + name + "(" + arguments.stream().map(Object::toString).collect( Collectors.joining(", ") ) + ")";
     }
+
+    public boolean equalsWithoutVariablesName(Term other) {
+        if(this.type != other.type)
+            return false;
+        switch (this.type){
+            case CONSTANT:
+                return this.name.equals(other.name);
+            case FUNCTION: {
+                if(this.arguments.size() != other.arguments.size())
+                for (int i = 0; i < this.arguments.size(); i++) {
+                    if (!this.arguments.get(i).equalsWithoutVariablesName(other.arguments.get(i)))
+                        return false;
+                }
+                return true;
+            }
+            default:
+                return true;
+        }
+    }
 }

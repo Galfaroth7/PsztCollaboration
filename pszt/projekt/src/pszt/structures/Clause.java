@@ -36,11 +36,44 @@ public class Clause {
                     Clause resolution = new Clause();
                     resolution.add(adjustPredicates(new Clause(this), unification.sigma, thisPredicate));
                     resolution.add(adjustPredicates(new Clause(other), unification.sigmaPrime, otherPredicate));
-                    result.add(resolution);
+                    try{
+                        resolution.removeDuplicates();
+                        result.add(resolution);
+                    }catch (ClauseEvaluatedToTrueException ex){
+                        // if the exception was thrown, this clause gives us true
+                    }
                 }
             }
         }
         return result;
+    }
+
+    private void removeDuplicates() {
+        Set<Predicate> toRemove = new HashSet<>();
+        for(Predicate predicateA: this.predicates){
+            for(Predicate predicateB: this.predicates){
+                if(predicateA == predicateB
+                        || !predicateA.getName().equals(predicateB.getName()))
+                    continue;
+                if(predicateA.isNegated() != predicateB.isNegated()){
+                    if(predicateA.equalsWithoutVariablesName(predicateB))
+                        throw new ClauseEvaluatedToTrueException();
+                }
+                else {
+                    Unification unification = findUnification(new Predicate(predicateA), new Predicate(predicateB));
+                    if (unification == null) continue;
+                    Set<String> bVars = predicateB.getAllVariables();
+                    Set<String> aVars = predicateA.getAllVariables();
+                    if(unification.sigma.isEmptyOrVarByVar(aVars) && !unification.sigmaPrime.isEmptyOrVarByVar(bVars)){
+                        toRemove.add(predicateA);
+                    }
+                    if(!unification.sigma.isEmptyOrVarByVar(bVars) && unification.sigmaPrime.isEmptyOrVarByVar(aVars)) {
+                        toRemove.add(predicateB);
+                    }
+                }
+            }
+        }
+        this.predicates.removeAll(toRemove);
     }
 
     private List<Predicate> adjustPredicates(Clause source, Substitution substitution, Predicate exclude) {

@@ -44,8 +44,17 @@ public class Substitution {
     }
 
     public void swap() {
-        Map temp = currentMap;
+        //Map temp = currentMap;
         currentMap = archiveMap;
-        archiveMap = temp;
+        //archiveMap = temp;
+    }
+
+    public boolean isEmptyOrVarByVar(Set<String> variablesToScan){
+        return archiveMap.isEmpty()
+                || archiveMap.keySet().stream()
+                .filter(variablesToScan::contains)
+                .map(archiveMap::get)
+                .filter(term -> term.type() != TermType.VARIABLE)
+                .count() == 0;
     }
 }
