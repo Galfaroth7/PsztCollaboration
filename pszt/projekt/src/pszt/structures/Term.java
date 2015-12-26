@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package pszt.structures;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -12,6 +6,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+// TODO zamienić to na dziedziczenie i polimorfizm
 
 public class Term {
 
@@ -84,7 +80,7 @@ public class Term {
             return;
         this.name = other.name;
         this.type = other.type;
-        if(this.type == TermType.FUNCTION){
+        if(other.type == TermType.FUNCTION){
             arguments = new LinkedList<>();
             arguments.addAll( other.arguments.stream()
                     .map(Term::new)
