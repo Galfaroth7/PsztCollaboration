@@ -25,7 +25,7 @@ public class Clause implements Comparable<Clause> {
         return Collections.unmodifiableList(predicates);
     }
 
-    public List<Clause> performResolution(Clause other){
+    public List<Clause> performResolution(Clause other) throws ContraditionException {
         List<Clause> result = new ArrayList<>(this.predicates.size());
         renameVariables(other);
         for (Predicate thisPredicate : this.predicates) {
@@ -33,6 +33,8 @@ public class Clause implements Comparable<Clause> {
                 if(thisPredicate.isNegated(otherPredicate)){
                     Unification unification = findUnification(new Predicate(thisPredicate), new Predicate(otherPredicate));
                     if (unification == null) continue;
+                    if(this.predicates.size() == 1)
+                        throw new ContraditionException();
                     Clause resolution = new Clause();
                     resolution.add(adjustPredicates(new Clause(this), unification.sigma, thisPredicate));
                     resolution.add(adjustPredicates(new Clause(other), unification.sigmaPrime, otherPredicate));
@@ -107,7 +109,7 @@ public class Clause implements Comparable<Clause> {
         Substitution substitution = new Substitution();
         other.predicates.forEach(predicate -> predicate.renameVariables(forbiddenVariables, substitution));
     }
-<<<<<<< HEAD
+
     private Clause deleteRedundancy()
     {
     	Clause notRedundant;
@@ -117,8 +119,6 @@ public class Clause implements Comparable<Clause> {
     	}
     	return null;
     }
-=======
->>>>>>> refs/remotes/origin/refactorizations
 
     @Override
     public String toString() {
@@ -126,13 +126,10 @@ public class Clause implements Comparable<Clause> {
                 .map(Object::toString)
                 .collect(Collectors.joining(" v "));
     }
-<<<<<<< HEAD
+
 	@Override
 	public int compareTo(Clause o) {
 		// TODO Auto-generated method stub
 		return predicates.size() - o.getPredicates().size();
 	}
 }
-=======
-}
->>>>>>> refs/remotes/origin/refactorizations
