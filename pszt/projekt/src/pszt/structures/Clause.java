@@ -9,7 +9,7 @@ package pszt.structures;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Clause {
+public class Clause implements Comparable<Clause> {
     
     private List<Predicate> predicates = new LinkedList<>();
 
@@ -17,7 +17,7 @@ public class Clause {
 
     }
 
-    Clause(Clause origin){
+    public Clause(Clause origin){
         origin.predicates.forEach(p -> this.predicates.add(new Predicate(p)));
     }
 
@@ -80,11 +80,24 @@ public class Clause {
         Substitution s = new Substitution();
         other.predicates.forEach(p -> p.renameVariables(variables, s));
     }
-
+    private Clause deleteRedundancy()
+    {
+    	Clause notRedundant;
+    	for(int overlapping = 0; overlapping < predicates.size(); ++overlapping)
+    	{
+    		
+    	}
+    	return null;
+    }
 
     @Override
     public String toString() {
         return predicates.stream().map(Object::toString)
                 .collect(Collectors.joining(" v "));
     }
+	@Override
+	public int compareTo(Clause o) {
+		// TODO Auto-generated method stub
+		return predicates.size() - o.getPredicates().size();
+	}
 }
