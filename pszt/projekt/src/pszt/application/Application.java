@@ -4,13 +4,19 @@ import java.util.List;
 
 import pszt.parser.*;
 import pszt.algorithms.*;
+import pszt.userinterface.*;
 public class Application
 {
 	static Parser parser = new Parser();
 	static ResolvingMachine resolver = new ResolvingMachine();
+       
 	public static void main(String[] args)
-	{
-		resolver.addKnowledgeBase(parser.parseClausesFromFile("resources/KnowledgeBase1.in"));
+	{   
+            MainWindow mainWindow = new MainWindow(parser, resolver); 
+            
+	}
+}
+/*		resolver.addKnowledgeBase(parser.parseClausesFromFile("resources/KnowledgeBase1.in"));
 		resolver.addTheses(parser.parseClausesFromFile("resources/thesis1.in"));
 		List<ClauseWrapper> result = resolver.linearResolver(false);
 		try
@@ -28,6 +34,4 @@ public class Application
 		{
 			System.out.println("Brak pliku" + e.getMessage());
 			return;
-		}
-	}
-}
+		}*/
