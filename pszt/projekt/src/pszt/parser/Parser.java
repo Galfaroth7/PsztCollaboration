@@ -23,14 +23,30 @@ public class Parser {
     private final char FUN_END = ')';
     private final String CLAUSE_DELIMITER = "v";
     private final char NEGATION_SIGN = '~';
+  
     
+    
+    /**
+     * Parses clauses entered in the interface.
+     * @param lines list of clauses (knowledge base or thesis) typed in by user
+     * @return list of parsed clauses
+     */
+    
+    public List<Clause> parseClausesFromInterface(List<String> lines){
+        List<Clause> clauses = new ArrayList<>();
+        for(String line: lines){
+            clauses.add(parseClause(line));
+        }
+        return clauses;
+    }
+   
     /**
      * Parses all clauses from the given file. The file must 
      * contain one clause per line. The method uses parseClause method
      * to parse every line from file.
      * @param filePath path to the input file
      * @return list of parsed clauses
-     */
+     */   
     public List<Clause> parseClausesFromFile(String filePath){
         List<Clause> clauses = new ArrayList<>();
         try(BufferedReader reader = Files.newBufferedReader(Paths.get(filePath))){
